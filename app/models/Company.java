@@ -9,6 +9,17 @@ public class Company {
     private BigDecimal slaPercentage;
     private BigDecimal currentSlaPercentage;
 
+    public Company() {
+    }
+
+    public Company(int id, String name, int slaTime, BigDecimal slaPercentage, BigDecimal currentSlaPercentage) {
+        this.id = id;
+        this.name = name;
+        this.slaTime = slaTime;
+        this.slaPercentage = slaPercentage;
+        this.currentSlaPercentage = currentSlaPercentage;
+    }
+
     public int getId() {
         return id;
     }
@@ -47,5 +58,16 @@ public class Company {
 
     public void setCurrentSlaPercentage(BigDecimal currentSlaPercentage) {
         this.currentSlaPercentage = currentSlaPercentage;
+    }
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", slaTime=" + slaTime +
+                ", slaPercentage=" + slaPercentage +
+                ", currentSlaPercentage=" + currentSlaPercentage +
+                '}';
     }
 }

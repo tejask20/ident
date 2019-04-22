@@ -11,6 +11,8 @@ libraryDependencies ++= Seq(
   cache,
   javaWs
 )
+libraryDependencies += "org.json" % "json" % "20180813"
+libraryDependencies += "junit" % "junit" % "4.12" % Test
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.

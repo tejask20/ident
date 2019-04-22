@@ -12,6 +12,17 @@ public class Ident {
     private int waitTime;
     private Company company;
 
+    public Ident() {
+    }
+
+    public Ident(int id, String name, long startTime, int waitTime, Company company) {
+        this.id = id;
+        this.name = name;
+        this.startTime = startTime;
+        this.waitTime = waitTime;
+        this.company = company;
+    }
+
     public int getId() {
         return id;
     }
@@ -63,5 +74,16 @@ public class Ident {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Ident{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", startTime=" + startTime +
+                ", waitTime=" + waitTime +
+                ", company=" + company +
+                '}';
     }
 }

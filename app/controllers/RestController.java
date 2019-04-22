@@ -35,11 +35,7 @@ public class RestController extends Controller {
 
         IdentRepository.getIdentRepository().addIdent(ident);
 
-        List<Ident> result = IdentRepository.getIdentRepository().getAllIdents();
-        ObjectMapper mapper = new ObjectMapper();
-
-        JsonNode jsonData = mapper.convertValue(result, JsonNode.class);
-        return ok(jsonData);
+        return ok();
     }
 
     public Result addCompany() {
@@ -49,13 +45,11 @@ public class RestController extends Controller {
         if (json == null) {
             return badRequest("Expecting Json data ");
         }
+
+        //Add the company to repository
         CompanyRepository.getCompanyRepository().addCompany(Json.fromJson(json, Company.class));
 
-        List<Company> result = CompanyRepository.getCompanyRepository().getAllCompanies();
-        ObjectMapper mapper = new ObjectMapper();
-
-        JsonNode jsonData = mapper.convertValue(result, JsonNode.class);
-        return ok(jsonData);
+        return ok();
     }
 
     public Result identifications() {
@@ -63,17 +57,23 @@ public class RestController extends Controller {
 
         List<Ident> allIdents = IdentRepository.getIdentRepository().getAllIdents();
 
-        //Comparator<Ident> identComparator = (i1, i2) -> i1.getCompany().getSlaTime().compareTo(i2.getCompany().getSlaTime());
+        //First sort the idents based on the Company's SLA (ascending)
+        //Then sort the idents based on the corresponding waiting time (descending)
+        //Lastly sort the idents based on current SLA percentage (ascending)
+
+        Comparator<Ident> slaComparator = Comparator.comparingInt((Ident i) -> i.getCompany().getSlaTime());
+        Comparator<Ident> waitTimeComparator = Comparator.comparing(Ident::getWaitTime, (time1, time2) -> {
+                                                                                    if(time1 == time2)  return 0;
+                                                                                    return time1 < time2 ? 1 : -1;
+                                                                                });
+        Comparator<Ident> currSlaComparator = Comparator.comparing((Ident i) -> i.getCompany().getCurrentSlaPercentage());
 
         List<Ident> sortedIdents = allIdents.stream().sorted(
-                                        Comparator.comparingInt((Ident i) -> i.getCompany().getSlaTime())
-                                                    .thenComparing((Ident i) -> i.getWaitTime())
-                                                    .reversed()
-                                                    .thenComparing((Ident i) -> i.getCompany().getCurrentSlaPercentage())
+                                                        slaComparator
+                                                                .thenComparing(waitTimeComparator)
+                                                                .thenComparing(currSlaComparator)
                                                     )
                                     .collect(Collectors.toList());
-
-
 
         return ok(Json.toJson(sortedIdents));
     }
